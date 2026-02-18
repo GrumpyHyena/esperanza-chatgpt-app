@@ -25,6 +25,7 @@ interface Meta {
   sessions: Session[];
   tickets: Ticket[];
   shopUrl: string;
+  coverUrl: string;
 }
 
 function formatDate(dateStr: string): { day: string; time: string } {
@@ -54,7 +55,7 @@ function BuyTickets() {
     );
   }
 
-  const { sessions, tickets, shopUrl } = meta;
+  const { sessions, tickets, shopUrl, coverUrl } = meta;
   const selectedSession = sessions.find((s) => s.id === selectedSessionId);
   const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
 
@@ -64,7 +65,7 @@ function BuyTickets() {
       {step === 0 && (
         <div>
           <div className="poster-wrapper">
-            <img src="/poster.png" alt="Esperanza" className="poster" />
+            <img src={coverUrl} alt="Esperanza" className="poster" />
           </div>
           <div className="header">
             <h1 className="title">Esperanza</h1>

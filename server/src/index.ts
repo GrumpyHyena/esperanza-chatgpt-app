@@ -50,6 +50,7 @@ const server = new McpServer(
       ui: {
         csp: {
           connectDomains: ["https://www.billetweb.fr"],
+          resourceDomains: ["https://www.billetweb.fr"],
           redirectDomains: ["https://www.billetweb.fr"],
         },
       },
@@ -116,6 +117,7 @@ const server = new McpServer(
         sessions: sessionsWithAvail,
         tickets: publicTickets,
         shopUrl: SHOP_URL,
+        coverUrl: "https://www.billetweb.fr/files/page/esperanza-spectacle-musical.png",
       },
     };
   },
