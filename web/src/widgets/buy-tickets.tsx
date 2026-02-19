@@ -24,7 +24,7 @@ interface Ticket {
 interface Meta {
   sessions: Session[];
   tickets: Ticket[];
-  shopUrl: string;
+  shopBase: string;
   coverUrl: string;
 }
 
@@ -55,7 +55,7 @@ function BuyTickets() {
     );
   }
 
-  const { sessions, tickets, shopUrl, coverUrl } = meta;
+  const { sessions, tickets, shopBase, coverUrl } = meta;
   const selectedSession = sessions.find((s) => s.id === selectedSessionId);
   const selectedTicket = tickets.find((t) => t.id === selectedTicketId);
 
@@ -225,7 +225,7 @@ function BuyTickets() {
             </div>
             <button
               className="cta"
-              onClick={() => openExternal(shopUrl)}
+              onClick={() => openExternal(`${shopBase}&session=${selectedSession.id}`)}
             >
               Réserver sur Billetweb
             </button>
