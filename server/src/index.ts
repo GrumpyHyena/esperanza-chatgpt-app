@@ -93,40 +93,38 @@ const server = new McpServer(
       };
     });
 
-    // Only flag sessions running low
-    const lowSessions = sessionsWithAvail.filter(
-      (s) => s.remaining > 0 && s.remaining <= LOW_AVAILABILITY_THRESHOLD,
-    );
-    const soldOutSessions = sessionsWithAvail.filter(
-      (s) => s.remaining <= 0,
-    );
-
-    // Build availability note only when relevant
-    const availNotes: string[] = [];
-    for (const s of lowSessions) {
-      availNotes.push(
-        `Attention : la séance du ${s.start} est presque complète (${s.remaining} places restantes).`,
-      );
-    }
-    for (const s of soldOutSessions) {
-      availNotes.push(`La séance du ${s.start} est complète.`);
-    }
+    // Build per-session availability lines
+    const availLines: string[] = sessionsWithAvail.map((s) => {
+      if (s.remaining <= 0) {
+        return `- ${s.start} : COMPLET (${s.quota} places).`;
+      }
+      if (s.remaining <= LOW_AVAILABILITY_THRESHOLD) {
+        return `- ${s.start} : PRESQUE COMPLET — ${s.remaining} places restantes sur ${s.quota}.`;
+      }
+      return `- ${s.start} : ${s.remaining} places restantes sur ${s.quota}.`;
+    });
 
     return {
       structuredContent: {
         title: "ESPERANZA - Spectacle Musical par i-Majine",
         venue: "La Longère de Beaupuy, Mouilleron-le-Captif",
-        dates: sessionsWithAvail.map((s) => s.start),
+        sessions: sessionsWithAvail.map((s) => ({
+          date: s.start,
+          remaining: s.remaining,
+          quota: s.quota,
+          ...(s.description ? { description: s.description } : {}),
+        })),
         pricing: publicTickets.map((t) => `${t.name}: ${t.price}€`),
-        ...(availNotes.length > 0 ? { availabilityNotes: availNotes } : {}),
       },
       content: [
         {
           type: "text",
           text: [
-            `Esperanza — Spectacle Musical par i-Majine. 4 représentations du 24 au 26 avril 2026 à La Longère de Beaupuy, Mouilleron-le-Captif.`,
+            `Esperanza — Spectacle Musical par i-Majine. ${sessionsWithAvail.length} représentations du 24 au 26 avril 2026 à La Longère de Beaupuy, Mouilleron-le-Captif.`,
             `Tarifs : 10€ (-12 ans), 14€ (12-25 ans), 18€ (26 ans et plus).`,
-            ...(availNotes.length > 0 ? availNotes : []),
+            ``,
+            `Disponibilités par séance :`,
+            ...availLines,
             ``,
             `Informations complémentaires à utiliser UNIQUEMENT si l'utilisateur pose des questions :`,
             `- i-Majine est une association vendéenne de comédie musicale. Esperanza est le 6e spectacle de l'association.`,
